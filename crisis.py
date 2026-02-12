@@ -22,7 +22,7 @@ def randomize_bg():
 def validate():
     global current_num
     global current_str
-    if answer_ent.get() == question[current_num][1]:
+    if answer_ent.get().casefold() == question[current_num][1].casefold():
         question[current_num][2]=True
         validate_str.set("Correcte")
         validate_lbl.config(fg="darkgreen")
@@ -49,9 +49,10 @@ def switch(num):
 
 ran_color=hex(random.randint(0, 16777215))
 
+#Case insensitive btw :3c
 question = [
     #["Question", "Answer", "Is completed"]
-    ["Exemple 1.", "Réponse 1", False],
+    ["Quel mot donne les cases colorées du mot mélé ?", "Inondation", False],
     ["Exemple 2.", "Réponse 2", False],
     ["Exemple 3.", "Réponse 3", False],
     ["Exemple 4.", "Réponse 4", False],
@@ -69,6 +70,7 @@ win = Tk()
 #Make the win fullscreen
 win.attributes("-fullscreen", True)
 
+'''
 #Create the window that will contain the progress bar
 progress = Tk()
 progress.configure(bg="black")
@@ -109,7 +111,7 @@ for i in range(len(question)):
         fill=list_colors[i]
     )
 #progress_cnv.create_rectangle(1, 1, int(progress_cnv.winfo_width()/len(question)), progress_cnv.winfo_height()-2, fill="green");
-
+'''
 #The current selected question
 current_num = 0
 current_str = StringVar(win, question[0][0])
@@ -166,7 +168,8 @@ answer_ent = Entry(
     fg="white",
     bg="black",
     highlightthickness=0,
-    borderwidth=5
+    borderwidth=5,
+    insertbackground="grey"
 )
 answer_ent.pack(
     side=LEFT,
@@ -217,4 +220,4 @@ randomize_bg()
 
 #The mainloop idk
 win.mainloop()
-progress.mainloop()
+#progress.mainloop()
