@@ -51,9 +51,10 @@ def switch(num):
 ran_color=hex(random.randint(0, 16777215))
 
 class Question:
-    def __init__(self, question_str, answer):
+    def __init__(self, question_str, answer, result):
         self.question_str = question_str
         self.answer = answer
+        self.result = result
         self.completed = False
 
 #Case insensitive btw :3c
@@ -61,7 +62,7 @@ questions = []
 with open("questions.json", "r", encoding="utf-8") as file:
         question_data = json.load(file)
         for i in range(len(question_data)):
-            questions.append(Question(question_data[i]["question_str"], question_data[i]["answer"]))
+            questions.append(Question(question_data[i]["question_str"], question_data[i]["answer"], question_data[i]["result"]))
 
 question_btn = [None] * len(questions)
 

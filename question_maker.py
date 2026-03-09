@@ -33,6 +33,7 @@ Pas besoin de mettre de guillemets, mettez juste votre texte exact.
 Pas trop long!!! Une phrase au mieux.
 >>>''')
     answer = input("Merci de faire la même chose avec votre réponse.\n>>>")
+    result = input("Merci de faire la même chose avec la phrase donnée après une bonne réponse.\n>>>")
     question_id = question_number + 1
 
     print('''Merci, on a bien pris en compte votre question!
@@ -41,6 +42,7 @@ Pas trop long!!! Une phrase au mieux.
         "question_str": question_str,
         "answer": answer,
         "id": question_id,
+        "result": result
         }
 
 main()
