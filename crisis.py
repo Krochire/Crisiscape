@@ -221,5 +221,3 @@ randomize_bg()
 #The mainloop idk
 win.mainloop()
 #progress.mainloop()
-
-main()
