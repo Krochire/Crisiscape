@@ -5,6 +5,7 @@
 from tkinter import *
 import random
 import time
+import json
 
 #Function called whenever question is selected, and at the beginning :)
 def randomize_bg():
@@ -22,9 +23,9 @@ def randomize_bg():
 def validate():
     global current_num
     global current_str
-    if answer_ent.get().casefold() == question[current_num][1].casefold():
-        question[current_num][2]=True
-        validate_str.set("Correcte")
+    if answer_ent.get().casefold() == questions[current_num].answer.casefold():
+        questions[current_num].completed=True
+        validate_str.set("Correct")
         validate_lbl.config(fg="darkgreen")
         validate_btn.config(state="disabled")
         question_btn[current_num].config(bg="#00ff00")
@@ -36,34 +37,33 @@ def validate():
 def switch(num):
     global current_str
     global current_num
-    current_str.set(question[num][0])
+    current_str.set(questions[num].question_str)
     current_num = num
     validate_str.set("")
     answer_ent.delete(0, END)
     randomize_bg()
     #Enable or disable the validate button
-    if question[current_num][2] == True:
+    if questions[current_num].completed == True:
         validate_btn.config(state="disabled")
     else:
         validate_btn.config(state="active")
 
 ran_color=hex(random.randint(0, 16777215))
 
-#Case insensitive btw :3c
-question = [
-    #["Question", "Answer", "Is completed"]
-    ["Quel mot donne les cases colorées du mot mélé ?", "Inondation", False],
-    ["Exemple 2.", "Réponse 2", False],
-    ["Exemple 3.", "Réponse 3", False],
-    ["Exemple 4.", "Réponse 4", False],
-    ["Exemple 5.", "Réponse 5", False],
-    ["Exemple 6.", "Réponse 6", False],
-    ["Exemple 7.", "Réponse 7", False],
-    ["Exemple 8.", "Réponse 8", False],
-    ["Exemple 9.", "Réponse 9", False]
-]
+class Question:
+    def __init__(self, question_str, answer):
+        self.question_str = question_str
+        self.answer = answer
+        self.completed = False
 
-question_btn = [None] * len(question)
+#Case insensitive btw :3c
+questions = []
+with open("questions.json", "r", encoding="utf-8") as file:
+        question_data = json.load(file)
+        for i in range(len(question_data)):
+            questions.append(Question(question_data[i]["question_str"], question_data[i]["answer"]))
+
+question_btn = [None] * len(questions)
 
 #Create the window
 win = Tk()
@@ -114,11 +114,11 @@ for i in range(len(question)):
 '''
 #The current selected question
 current_num = 0
-current_str = StringVar(win, question[0][0])
+current_str = StringVar(win, questions[0].question_str)
 
 valid_img = PhotoImage(file="valid1.png")
 
-#The Correcte or Faux string
+#The Correct or Faux string
 validate_str = StringVar(win, "")
 
 #Container for all the question selection button
@@ -141,7 +141,7 @@ question_lbl.pack(
     pady=(150, 0)
 )
 
-#Element that shows Correcte or Faux
+#Element that shows Correct or Faux
 validate_lbl = Label(
     win,
     textvariable=validate_str,
@@ -197,7 +197,7 @@ validate_btn.pack(
 )
 
 #Generate question selection button
-for i in range(len(question)):
+for i in range(len(questions)):
     question_btn[i] = Button(
         button_frm,
         text=str(i+1),
@@ -217,7 +217,9 @@ for i in range(len(question)):
     )
 
 randomize_bg()
-
+            
 #The mainloop idk
 win.mainloop()
 #progress.mainloop()
+
+main()
