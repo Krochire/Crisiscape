@@ -232,7 +232,6 @@ for i in range(len(questions)):
     )
 
 randomize_bg()
-print(questions[0].result)
 #The mainloop idk
 win.mainloop()
 #progress.mainloop()
