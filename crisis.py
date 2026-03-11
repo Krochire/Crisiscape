@@ -6,16 +6,67 @@ from tkinter import *
 import random
 import json
 
-#Function called whenever question is selected, and at the beginning :)
+class App(Tk):
+    def __init__(self):
+        super().__init__()
+        self.attributes("-fullscreen", True)
+
+        #Question select widget
+        with open("questions.json", "r", encoding="utf-8") as file:
+            question_data = json.load(file)
+            #Case-insensitive btw :3c
+            self.questions = [
+                {
+                "question_str": q["question_str"],
+                "answer": q["answer"],
+                "result": q["result"],
+                "completed": False,
+                }
+                for q in question_data
+            ]
+        
+        self.current_num = 0                                             #Selects the first question by default
+        self.current_str = StringVar(self, questions[0]["question_str"]) #
+
+        self.button_frm = Frame(self)
+        button_frm.pack(side=BOTTOM)
+        
+        question_btn = []
+        for i in range(len(questions)):
+            question_btn.append(Button(self.button_frm,
+                text=str(i+1),
+                font="Arial, 25 bold",
+                bg="darkorange",
+                relief=RAISED,
+                activebackground="yellow",
+                command=lambda i=i: self.switch(i),
+                width=3,
+                borderwidth=5,
+                highlightbackground="black",
+                highlightthickness=3
+            ))
+           question_btn[i].pack(
+                side=LEFT,
+                padx=20,
+                pady=(0, 50)
+            )
+
+        question_lbl = Label(self, textvariable=self.current_str, font="Helvetica, 30 bold", anchor="center")
+        question_lbl.pack(side=TOP, pady=(150, 0))
+
+        self.randomize_bg()
+
+    #Callback function to randomize the background color of all the elements
+    def randomize_bg(self):
+        #the hell is this built-in function <- it returns a hexadecimal string of the number you passed it
+        ran_color = hex(random.randint(0, 4194303) #The magic number is 0xFFFFFF in decimal, as random.randint can only use decimal
+        bg_color = "#" + ran_color[2:].zfill(6)    #The bg attribute of tkinter requires colors in the form of #000A1E
+        self.configure(bg=background_color)
+        self.button_frm.config(bg=background_color)
+        question_lbl.config(bg=background_color)
+
 def randomize_bg():
-    global ran_color
-    #the hell is this built-in function
-    ran_color=hex(random.randint(0, 4194303))
-    background_color = "#" + ran_color[2:].zfill(6)
-    win.configure(bg=background_color)
-    question_lbl.config(bg=background_color)
     validate_lbl.config(bg=background_color)
-    button_frm.config(bg=background_color)
     answer_frm.config(bg=background_color)
     validate_btn.config(highlightbackground=background_color)
     result_lbl.config(bg=background_color)
@@ -58,26 +109,8 @@ def switch(num):
 
 ran_color=hex(random.randint(0, 16777215))
 
-class Question:
-    def __init__(self, question_str, answer, result):
-        self.question_str = question_str
-        self.answer = answer
-        self.result = result
-        self.completed = False
+app = App()
 
-#Case-insensitive btw :3c
-questions = []
-with open("questions.json", "r", encoding="utf-8") as file:
-        question_data = json.load(file)
-        for i in range(len(question_data)):
-            questions.append(Question(question_data[i]["question_str"], question_data[i]["answer"], question_data[i]["result"]))
-
-question_btn = [None] * len(questions)
-
-#Create the window
-win = Tk()
-#Make the win fullscreen
-win.attributes("-fullscreen", True)
 
 '''
 #Create the window that will contain the progress bar
@@ -122,8 +155,6 @@ for i in range(len(question)):
 #progress_cnv.create_rectangle(1, 1, int(progress_cnv.winfo_width()/len(question)), progress_cnv.winfo_height()-2, fill="green");
 '''
 #The current selected question
-current_num = 0
-current_str = StringVar(win, questions[0].question_str)
 
 valid_img = PhotoImage(file="valid.png")
 
@@ -238,5 +269,5 @@ for i in range(len(questions)):
 
 randomize_bg()
 #The mainloop idk
-win.mainloop()
+app.mainloop()
 #progress.mainloop()
