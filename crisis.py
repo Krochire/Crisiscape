@@ -6,6 +6,9 @@ from tkinter import *
 import random
 import json
 
+#Functions
+#=========
+
 #Function called whenever question is selected, and at the beginning :)
 def randomize_bg():
     #the hell is this built-in function
@@ -23,6 +26,7 @@ def randomize_bg():
 def validate():
     global current_num
     global current_str
+    global completed_questions
     if answer_ent.get().casefold() == questions[current_num]["answer"].casefold():
         questions[current_num]["completed"]=True
         result_lbl.config(text=questions[current_num]["result"])
@@ -30,6 +34,8 @@ def validate():
         validate_lbl.config(fg="darkgreen")
         validate_btn.config(state="disabled")
         question_btn[current_num].config(bg="#00ff00")
+        completed_questions += 1
+        progress_update()
     else:
         validate_str.set("Faux")
         validate_lbl.config(fg="red")
@@ -55,18 +61,25 @@ def switch(num):
         validate_btn.config(state="normal")
         result_lbl.config(text="")
 
+def progress_update():
+    ratio = completed_questions / len(questions)
+    progress_bar.coords(progress_meter, start_rectangle, (PROGRESS_W * ratio, PROGRESS_H))
+    completion_str.set(f"{completed_questions}/{len(questions)}")
+
+#Console gui
+#===========
 #Case-insensitive btw :3c
 with open("questions.json", "r", encoding="utf-8") as file:
         question_data = json.load(file)
-        questions = [
-            {
-                "question_str": question["question_str"],
-                "answer": question["answer"],
-                "result": question["result"],
-                "completed": False,
-            }
-            for question in question_data
-        ]
+questions = [
+    {
+        "question_str": question["question_str"],
+        "answer": question["answer"],
+        "result": question["result"],
+        "completed": False,
+    }
+    for question in question_data
+]
 
 #Create the window
 win = Tk()
@@ -178,7 +191,49 @@ for i in range(len(questions)):
         pady=(0, 50)
     )
 
+#Progress bar gui
+#================
+PROGRESS_W = 1000
+PROGRESS_H = 100
+completed_questions = 0
+start_rectangle = (0, 0)
+
+progress = Tk()
+progress.title("Progress Bar")
+progress.geometry("1280x720")
+progress.configure(bg="#ff9bff")
+
+progress_bar = Canvas(
+    progress,
+    width=PROGRESS_W,
+    height=PROGRESS_H,
+    bg="#ffffff"
+)
+progress_bar.pack(
+    side=BOTTOM,
+    expand=True,
+    fill=NONE,
+)
+progress_meter = progress_bar.create_rectangle( #TODO: Some refactoring here and below because it's duplicate code from progress_update()
+    start_rectangle,
+    (0, PROGRESS_H),
+    fill="#006400"
+)
+
+completion_str = StringVar(progress, f"{completed_questions}/{len(questions)}")
+
+completion_lbl = Label(
+    progress,
+    textvariable=completion_str,
+    font="Helvetica, 30 bold",
+    bg="#ff9bff"
+)
+completion_lbl.pack(
+    side=BOTTOM,
+    pady=10
+)
+
 randomize_bg()
 #The mainloop idk
 win.mainloop()
-#progress.mainloop()
+progress.mainloop()
