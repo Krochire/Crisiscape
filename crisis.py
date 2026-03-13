@@ -226,7 +226,7 @@ progress_bar.pack(
 progress_meter = progress_bar.create_rectangle( # TODO: Some refactoring here and below because it's duplicate code from progress_update()
     start_rectangle,
     (0, PROGRESS_H),
-    fill="#darkgreen"
+    fill="darkgreen"
 )
 
 completion_str = StringVar(progress, f"{completed_questions}/{len(questions)}")
