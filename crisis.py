@@ -5,6 +5,7 @@
 from tkinter import *
 import random
 import json
+import sys
 
 #Functions
 #=========
@@ -69,8 +70,16 @@ def progress_update():
 #Console gui
 #===========
 #Case-insensitive btw :3c
-with open("questions.json", "r", encoding="utf-8") as file:
+
+#Check if the questions.json exist, otherwise the console is closed
+try:
+    with open("questions.json", "r", encoding="utf-8") as file:
         question_data = json.load(file)
+except FileNotFoundError:
+    RED = "\033[0;31m"
+    RESET = "\033[0m"
+    sys.exit(f"\n{RED}questions.json does not exist, please create it with question_maker.py!{RESET}\n") #\033 are ANSI code colour, [0;31m is red, and [0m is reset
+
 questions = [
     {
         "question_str": question["question_str"],
@@ -207,17 +216,17 @@ progress_bar = Canvas(
     progress,
     width=PROGRESS_W,
     height=PROGRESS_H,
-    bg="#ffffff"
+    bg="white"
 )
 progress_bar.pack(
     side=BOTTOM,
     expand=True,
     fill=NONE,
 )
-progress_meter = progress_bar.create_rectangle( #TODO: Some refactoring here and below because it's duplicate code from progress_update()
+progress_meter = progress_bar.create_rectangle( # TODO: Some refactoring here and below because it's duplicate code from progress_update()
     start_rectangle,
     (0, PROGRESS_H),
-    fill="#006400"
+    fill="darkgreen"
 )
 
 completion_str = StringVar(progress, f"{completed_questions}/{len(questions)}")
