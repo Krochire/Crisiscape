@@ -37,6 +37,9 @@ def validate():
         question_btn[current_num].config(bg="#00ff00")
         completed_questions += 1
         progress_update()
+    elif not answer_ent.get():
+        validate_str.set("Veuillez entrez une réponse")
+        validate_lbl.config(fg="orange")
     else:
         validate_str.set("Faux")
         validate_lbl.config(fg="red")
@@ -90,8 +93,10 @@ questions = [
     for question in question_data
 ]
 
-#Create the window
+#Create the window and give it a title
 win = Tk()
+win.title("Console de la cellule de Crise")
+
 #Make the win fullscreen
 win.attributes("-fullscreen", True)
 
