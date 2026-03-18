@@ -64,8 +64,13 @@ def switch(num):
 
 def progress_update():
     ratio = completed_questions / len(questions)
-    progress_bar.coords(progress_meter, start_rectangle, (PROGRESS_W * ratio, PROGRESS_H))
-    completion_str.set(f"{completed_questions}/{len(questions)}")
+    if ratio != 1:
+        progress_bar.coords(progress_meter, start_rectangle, (PROGRESS_W * ratio, PROGRESS_H))
+        completion_str.set(f"{completed_questions}/{len(questions)}")
+    else:
+        progress_bar.pack_forget()
+        completion_lbl.pack_forget()
+        victory_lbl.pack(expand=True, fill=NONE)
 
 #Console gui
 #===========
@@ -75,10 +80,12 @@ def progress_update():
 try:
     with open("questions.json", "r", encoding="utf-8") as file:
         question_data = json.load(file)
+        if question_data == []:
+            raise FileNotFoundError
 except FileNotFoundError:
-    RED = "\033[0;31m"
-    RESET = "\033[0m"
-    sys.exit(f"\n{RED}questions.json does not exist, please create it with question_maker.py!{RESET}\n") #\033 are ANSI code colour, [0;31m is red, and [0m is reset
+    sys.exit("\nquestions.json does not exist/is empty, please create it with question_maker.py!") #\033 are ANSI code colour, [0;31m is red, and [0m is reset
+except json.JSONDecodeError:
+    sys.exit("questions.json is malformed. This means you touched it. You can either:\n-Revert your changes if you have a backup,\n-Manually fix it using the json specification,\n-Delete it and recreate it with question_maker.py.")
 
 questions = [
     {
@@ -240,6 +247,14 @@ completion_lbl = Label(
 completion_lbl.pack(
     side=BOTTOM,
     pady=10
+)
+
+victory_lbl= Label(
+    progress,
+    text="PLACEHOLDER VICTORY TEXT",
+    font="Helvetica, 30 bold",
+    bg="#ff9bff",
+    fg="darkgreen"
 )
 
 switch(0)
