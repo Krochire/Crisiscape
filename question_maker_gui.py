@@ -44,7 +44,6 @@ def make_question():
         "id": None,
         "result": result
     }
-    print(new_question)
     return new_question
 
 # Callback functions
@@ -114,7 +113,7 @@ def edit_question(index):
 # Populates list_variable and shows the question review form, called by a button in menu_frm
 def review_question(hide):
     questions = [
-        f"Question {q["id"]}: {q["question_str"]}"
+        f"Question {q['id']}: {q['question_str']}"
         for q in json_object
     ]
     list_variable.set(tuple(questions))
