@@ -33,7 +33,6 @@ def make_question():
     question_str = question_ent.get()
     answer = answer_ent.get()
     result = result_ent.get()
-    question_id = len(json_object)
 
     if question_str == "" or answer == "" or result == "":
         info_lbl.config(text="Tous les champs doivent être remplis!", fg="red")
@@ -42,7 +41,7 @@ def make_question():
     new_question = {
         "question_str": question_str,
         "answer": answer,
-        "id": question_id,
+        "id": None,
         "result": result
     }
     print(new_question)
@@ -53,7 +52,10 @@ def make_question():
 # Callback function to handle listbox selection
 def handle_listbox_select(event):
     global selected_question
-    selected_question, = question_lst.curselection()
+    try:
+        selected_question, = question_lst.curselection()
+    except ValueError:
+        return
     delete_btn.config(state="active")
     edit_btn.config(state="active")
 
@@ -77,7 +79,7 @@ def add_question():
     new_question = make_question()
     if not new_question:
         return
-
+    new_question["id"] = len(json_object)
     json_object.append(new_question)
 
     question_ent.delete(0, tk.END)
@@ -99,13 +101,8 @@ def edit_question(index):
     new_question = make_question()
     if not new_question:
         return
-
-    json_object[index] = {
-            "question_str": question_str,
-            "answer": answer,
-            "id": index,
-            "result": result
-        }
+    new_question["id"] = index
+    json_object[index] = new_question
 
     question_ent.delete(0, tk.END)
     answer_ent.delete(0, tk.END)
